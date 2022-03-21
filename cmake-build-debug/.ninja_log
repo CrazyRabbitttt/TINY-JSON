@@ -1,0 +1,6 @@
+# ninja log v5
+0	36	1647590293634113378	CMakeFiles/For_Project.dir/TinyJson/Version1/leptjson.c.o	a0cf0824de9791ba
+0	42	1647590293640268376	CMakeFiles/For_Project.dir/TinyJson/Version1/test.c.o	e5176ff5f380a429
+42	83	1647590293680896794	For_Project	5bc32f38fe35c5a0
+1	42	1647592319401366438	CMakeFiles/For_Project.dir/TinyJson/Version1/leptjson.c.o	a0cf0824de9791ba
+42	85	1647592319445719200	For_Project	5bc32f38fe35c5a0
