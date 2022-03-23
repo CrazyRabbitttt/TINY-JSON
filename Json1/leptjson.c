@@ -107,13 +107,32 @@ static int lept_parse_string(lept_context * c, lept_value * v) {
             case '\"':
                 len = c -> top - head;
                 //pop返回的是上面size大小的字符串
-                lept_set_string(c, lept_context_pop(c,len), len);
+                lept_set_string(v, (const char *)lept_context_pop(c,len), len);
                 c -> json = p;
                 return LEPT_PARSE_OK;
+            case '\\':
+                switch (*p++) {
+                    case '\"': PUTC(c, '\"'); break;
+                    case '\\': PUTC(c, '\\'); break;
+                    case '/':  PUTC(c, '/' ); break;
+                    case 'b':  PUTC(c, '\b'); break;
+                    case 'f':  PUTC(c, '\f'); break;
+                    case 'n':  PUTC(c, '\n'); break;
+                    case 'r':  PUTC(c, '\r'); break;
+                    case 't':  PUTC(c, '\t'); break;
+                    default:
+                        c->top = head;
+                        return LEPT_PARSE_INVALID_STRING_ESCAPE;
+                }
             case '\0':
                 c -> top = head;
                 return LEPT_PARSE_MISS_QUOTATION_MARK;
+                
             default:
+                if ((unsigned char)ch < 0x20) {
+                    c->top = head;
+                    return LEPT_PARSE_INVALID_STRING_CHAR;
+                }
                 PUTC(c, ch);
         }
     }
@@ -125,8 +144,8 @@ static int lept_parse_value(lept_context* c, lept_value* v) {
         case 't':  return lept_parse_literal(c, v, "true", LEPT_TRUE);
         case 'f':  return lept_parse_literal(c, v, "false", LEPT_FALSE);
         case 'n':  return lept_parse_literal(c, v, "null", LEPT_NULL);
-        case '"':  return lept_parse_string(c, v);
         default:   return lept_parse_number(c, v);
+        case '"':  return lept_parse_string(c, v);
         case '\0': return LEPT_PARSE_EXPECT_VALUE;
     }
 }
@@ -166,8 +185,8 @@ const char *  lept_get_string(const lept_value * v) {
 }
 
 void lept_set_string(lept_value * v, const char * s, size_t len) {
-    assert(v != NULL && (s == NULL || len == 0));   //非空指针或者是长度是0的字符串都是可以的
-    free(v);
+    assert(v != NULL && (s != NULL || len == 0));   //非空指针或者是长度是0的字符串都是可以的
+    lept_free(v);
     v -> u.s.s = (char *)malloc(sizeof(char) * (len + 1));       //char是1字节的
     memcpy(v -> u.s.s, s, len);
     v -> u.s.s[len] = '\0';

@@ -189,24 +189,24 @@ static void test_access_null() {
 
 static void test_access_boolean() {
     /* \TODO */
-    lept_value v;
+    /* Use EXPECT_TRUE() and EXPECT_FALSE() */
+    lept_value  v;
     lept_init(&v);
-    lept_set_string(&v, "a", 1);
+    lept_set_string(&v,"a",1);
+    lept_set_boolean(&v, 1);
     EXPECT_TRUE(lept_get_boolean(&v));
     lept_set_boolean(&v, 0);
     EXPECT_FALSE(lept_get_boolean(&v));
     lept_free(&v);
-
-    /* Use EXPECT_TRUE() and EXPECT_FALSE() */
 }
 
 static void test_access_number() {
     /* \TODO */
-    lept_value v;
+    lept_value  v;
     lept_init(&v);
     lept_set_string(&v, "a", 1);
-    lept_set_number(&v, 1234.5);
-    EXPECT_EQ_DOUBLE(1234.5, lept_get_number(&v));
+    lept_set_number(&v, 123.4);
+    EXPECT_EQ_DOUBLE(123.4, lept_get_number(&v));
     lept_free(&v);
 }
 
@@ -214,7 +214,7 @@ static void test_access_string() {
     lept_value v;
     lept_init(&v);
     lept_set_string(&v, "", 0);
-    EXPECT_EQ_STRING("", lept_get_string(&v),  (&v));
+    EXPECT_EQ_STRING("", lept_get_string(&v), lept_get_string_length(&v));
     lept_set_string(&v, "Hello", 5);
     EXPECT_EQ_STRING("Hello", lept_get_string(&v), lept_get_string_length(&v));
     lept_free(&v);
